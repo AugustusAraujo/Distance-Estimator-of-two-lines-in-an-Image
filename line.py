@@ -49,12 +49,6 @@ def draw_lines(image):
         cv2.line(image,  (0,k),(width,k),(255,255,255),1)
 
 
-
-
-
-
-
-
 ####read the dimension to pixel ratio from a csv file
 def get_ratio():        
  with open('ratio.csv', 'rb') as f:
@@ -71,20 +65,20 @@ def cal_new(slope_int,number_of_lines):
    numerator= abs(slope_int[1][1]-slope_int[0][1])
    denominator= math.sqrt(1+(slope_int[0][0])*(slope_int[0][0]))
    distance_pixel= numerator/denominator
-   print distance_pixel
+   print (distance_pixel)
    distance= distance_pixel*float(get_ratio())
-   print "distance",distance,"inch"
+   print ("distance",distance,"inch")
 
   elif number_of_lines==4:
    numerator= abs((slope_int[1][1]+slope_int[0][1])/2-(slope_int[2][1]+slope_int[3][1])/2)
    denominator= math.sqrt(1+((slope_int[0][0]+slope_int[1][0])/2)*((slope_int[2][0]+slope_int[3][0])/2))
    distance_pixel= numerator/denominator
-   print distance_pixel
+   print( distance_pixel)
    distance= distance_pixel*float(get_ratio())
-   print "distance",distance,"inch"
+   print ("distance",distance,"inch")
 
   else:
-   print "image not clear"
+   print ("image not clear")
           
           
 
@@ -96,13 +90,13 @@ def cal_dst(line,number_of_lines):
   m=(line[1][1]-line[0][1])/(line[1][0]-line[0][0]) #slope of the line
   #m= (line[3][1]-line[2][1])/(line[3][0]-line[2][0])
   numerator= abs(m*((line[2][0])-(line[0][0]))+((line[0][1])-(line[2][1])))
-  print numerator
+  print (numerator)
   denominator= math.sqrt(1+m*m)
-  print denominator
+  print (denominator)
   distance_pixel= numerator/denominator
-  print distance_pixel
+  print (distance_pixel)
   distance= distance_pixel*ref.find_ref("ref2.png")
-  print "distance",distance,"inch"
+  print ("distance",distance,"inch")
 
  elif number_of_lines==4:
   slope_num=(((line[1][1]+line[3][1])/2)-((line[0][1]+line[2][1])/2))
@@ -110,18 +104,18 @@ def cal_dst(line,number_of_lines):
   m= slope_num/slope_den
   #numerator= abs(m*((line[2][0])-(line[0][0]))+((line[0][1])-(line[2][1])))
   #m= (line[3][1]-line[2][1])/(line[3][0]-line[2][0])
-  print m
+  print (m)
   numerator= abs(m*((line[4][0]+line[6][0])/2)-((line[0][0]+line[2][0])/2))+(((line[0][1]+line[2][1])/2)-((line[4][1]+line[6][1])/2))
-  print numerator
+  print (numerator)
   denominator= math.sqrt(1+m*m)
-  print denominator
+  print (denominator)
   distance_pixel= numerator/denominator
-  print distance_pixel
+  print (distance_pixel)
   distance= distance_pixel*ref.find_ref("ref2.png")
-  print "distance",distance,"inch"
+  print ("distance",distance,"inch")
 
  else:
-  print "image not clear"
+  print ("image not clear")
         
  
         
@@ -141,7 +135,7 @@ def find_bend(img):
  # load the image, crop it and  convert it to grayscale
  image= cv2.imread(img)
  if image is None:
-         print "No image"
+         print ("No image")
          return 1
  image= image[template_y:template_y+height,template_x:template_x+width]
  gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -174,7 +168,7 @@ def find_bend(img):
  #print count_line
  #print len(dat)
  #print dat
- regression (dat,count_line)
+ regression(dat,count_line)
  return 1
  cv2.namedWindow('image',cv2.WINDOW_NORMAL)
  cv2.resizeWindow('image', 3200,2200)
@@ -186,9 +180,6 @@ def find_bend(img):
 
  
 def regression(dat,count_line):
-
-      
-
    for k in range(len(dat)): 
      #print k
      data = [ a[0] for a in dat[k]]
@@ -211,8 +202,8 @@ def regression(dat,count_line):
      #print bending_y_pred
      #print len(bending_y_pred)
      # The coefficients
-     print 'Coefficients[horizontal]: ', regr.coef_,regr.intercept_
-     print 'Coefficients[vertical]: ',regr1.coef_,regr1.intercept_
+     print ('Coefficients[horizontal]: ', regr.coef_,regr.intercept_)
+     print ('Coefficients[vertical]: ',regr1.coef_,regr1.intercept_)
 
      
      
@@ -244,8 +235,8 @@ def regression(dat,count_line):
              if error< min_error:
                      min_error= error
                      
-      print "max error",max_error*float(get_ratio()), "in the pixel",place*float(get_ratio())
-      print "min error",min_error*float(get_ratio())
+      print( "max error",max_error*float(get_ratio()), "in the pixel",place*float(get_ratio()))
+      print( "min error",min_error*float(get_ratio()))
 
      else:
         max_y=max(y_)[0]
@@ -269,12 +260,12 @@ def regression(dat,count_line):
              if error< min_error:
                      min_error= error
                      
-        print "max error",max_error*float(get_ratio()), "in the pixel",place*float(get_ratio())
-        print "min error",min_error*float(get_ratio())
+        print ("max error",max_error*float(get_ratio()), "in the pixel",place*float(get_ratio()))
+        print ("min error",min_error*float(get_ratio()))
         
      # The mean squared error
-     print "Mean squared error [horizontal],[vertical]: ",err ,err1
-     print "RMSE [horizontal],[vertical]:  ",math.sqrt(err), math.sqrt(err1)
+     print( "Mean squared error [horizontal],[vertical]: ",err ,err1)
+     print ("RMSE [horizontal],[vertical]:  ",math.sqrt(err), math.sqrt(err1))
      plt.scatter(x_*float(get_ratio()),y_*float(get_ratio()),  color='green')
      plt.plot(x_*float(get_ratio()), bending_y_pred*float(get_ratio()), 'r')
      plt.plot(bending_x_pred*float(get_ratio()),y_*float(get_ratio()),'b')
